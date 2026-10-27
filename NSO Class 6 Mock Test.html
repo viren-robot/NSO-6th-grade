@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NSO Class 6 Mock Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EAF0F7; --sheet:#FFFFFF; --ink:#13294B; --muted:#56678A; --line:#C6D3E3;
+  --graphite:#22262D; --on-graphite:#FFFFFF; --hi:#FFD23F; --on-hi:#13294B;
+  --good:#1C7F52; --bad:#BD3B34; --review:#6D45CF; --good-bg:#E1F3EA; --bad-bg:#FBE6E4;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1525; --sheet:#172239; --ink:#E5ECF6; --muted:#9BAAC4; --line:#2C3B58;
+    --graphite:#E5ECF6; --on-graphite:#0E1525; --hi:#F5C518; --on-hi:#0E1525;
+    --good:#4CC38A; --bad:#F2766D; --review:#B49CFF; --good-bg:#14352A; --bad-bg:#3D1F23;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1525; --sheet:#172239; --ink:#E5ECF6; --muted:#9BAAC4; --line:#2C3B58;
+  --graphite:#E5ECF6; --on-graphite:#0E1525; --hi:#F5C518; --on-hi:#0E1525;
+  --good:#4CC38A; --bad:#F2766D; --review:#B49CFF; --good-bg:#14352A; --bad-bg:#3D1F23;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 80px)}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size:18px; line-height:1.5;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+h1,h2,h3,.display{font-family:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.15;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+.hidden{display:none !important}
+
+/* Top bar */
+.bar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:5;
+  background:var(--sheet); border-bottom:2px solid var(--line);
+  display:flex; align-items:center; gap:16px; padding:10px 20px;
+}
+.bar .name{font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .name small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+.clock{
+  font-family:"Bricolage Grotesque",system-ui,sans-serif; font-weight:800;
+  font-size:34px; font-variant-numeric:tabular-nums; letter-spacing:.02em;
+  padding:2px 14px; border-radius:10px; border:2px solid var(--line); min-width:128px; text-align:center;
+}
+.clock.warn{background:var(--hi);color:var(--on-hi);border-color:var(--hi)}
+.clock.urgent{background:var(--bad);color:#fff;border-color:var(--bad)}
+@media (prefers-reduced-motion:no-preference){ .clock.urgent{animation:blink 1s steps(2) infinite} }
+@keyframes blink{50%{opacity:.55}}
+.btn{border:2px solid var(--ink);background:transparent;border-radius:10px;padding:8px 16px;font-weight:700}
+.btn.solid{background:var(--ink);color:var(--sheet)}
+.btn.quiet{border-color:var(--line)}
+.btn:disabled{opacity:.4;cursor:default}
+
+main{max-width:1120px;margin:0 auto;padding:24px 20px 60px}
+
+/* Start screen */
+.start{max-width:640px;margin:40px auto;background:var(--sheet);border:2px solid var(--line);border-radius:18px;padding:32px}
+.start h1{font-size:44px;font-weight:800}
+.start p{color:var(--muted)}
+.plan{width:100%;border-collapse:collapse;margin:20px 0 28px}
+.plan td{padding:10px 0;border-bottom:1px solid var(--line)}
+.plan td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.plan tr:last-child td{border-bottom:none;font-weight:700}
+.start .btn.solid{font-size:20px;padding:12px 28px}
+
+/* Exam layout */
+.exam{display:block;gap:24px;align-items:start}
+.card{background:var(--sheet);border:2px solid var(--line);border-radius:18px;padding:28px}
+.qmeta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:15px;margin-bottom:14px;flex-wrap:wrap}
+.qmeta .marks{font-weight:700;color:var(--ink)}
+.qnum{font-size:56px;font-weight:800;color:var(--line);float:left;margin:-6px 16px 0 0;line-height:1}
+.prompt{font-size:22px;font-weight:700;white-space:pre-line;min-height:72px}
+.opts{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:10px;clear:both}
+.opt{
+  display:flex;align-items:center;gap:16px;width:100%;text-align:left;
+  background:transparent;border:2px solid var(--line);border-radius:14px;padding:12px 16px;
+}
+.opt:hover{border-color:var(--muted)}
+.bub{
+  flex:none;width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);
+  display:grid;place-items:center;font-weight:700;font-size:16px;
+}
+.opt.on{border-color:var(--ink)}
+.opt.on .bub{background:var(--graphite);color:var(--on-graphite);border-color:var(--graphite)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.actions .grow{flex:1}
+.flag.on{background:var(--review);border-color:var(--review);color:#fff}
+.keys{margin-top:16px;color:var(--muted);font-size:14px}
+
+/* Bubble answer sheet */
+.sheet{background:var(--sheet);border:2px solid var(--line);border-radius:6px;padding:24px 28px 28px;margin-top:24px;color:var(--ink)}
+.sheet-meta{display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px;font-size:15px}
+@media (max-width:560px){ .sheet-meta{grid-template-columns:1fr 1fr} .sheet-meta label:first-child{grid-column:1 / -1} }
+.sheet-meta label{display:flex;align-items:flex-end;gap:8px}
+.sheet-meta input{flex:1;min-width:0;border:none;border-bottom:1.5px solid var(--ink);background:transparent;color:var(--ink);font:inherit;font-weight:700;padding:2px 4px}
+.sheet-meta input:focus-visible{outline:none;border-bottom-color:var(--review);border-bottom-width:3px}
+.sheet-title{display:flex;align-items:center;gap:0;margin:26px 0 12px;position:relative}
+.sheet-title .bar{position:absolute;left:0;top:-8px;width:120px;height:7px;background:var(--ink)}
+.sheet-title h2{font-size:30px;font-weight:800;font-style:italic;letter-spacing:-.01em;border-bottom:2px solid var(--ink);flex:1;padding-bottom:4px}
+.sheet-eg{display:flex;align-items:center;gap:6px;margin:4px 0 18px;padding:6px 10px;border:1.5px solid var(--ink);border-radius:999px;width:max-content;max-width:100%}
+.sheet-eg .note{margin-left:8px;font-size:14px;color:var(--muted)}
+.b{
+  width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink);background:transparent;
+  font-size:13px;font-weight:700;display:inline-grid;place-items:center;padding:0;line-height:1;flex:none;color:var(--ink);
+}
+.b:hover{background:color-mix(in srgb, var(--ink) 10%, transparent)}
+.b.fill,.b.fill:hover{background:var(--graphite);border-color:var(--graphite);color:var(--graphite)}
+.rows{display:grid;grid-auto-flow:column;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(17,auto);column-gap:28px;row-gap:4px}
+@media (max-width:760px){ .rows{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(25,auto);column-gap:16px} }
+.r{display:flex;align-items:center;gap:5px;padding:3px 6px;border-radius:999px}
+.r .n{width:34px;text-align:right;padding:0 4px 0 0;border:none;background:transparent;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.r.cur{background:var(--hi)}
+.r.cur .n,.r.cur .b{color:var(--on-hi);border-color:var(--on-hi)}
+.r.cur .b.fill{background:var(--on-hi);color:var(--on-hi)}
+.r.rev .n{text-decoration:underline wavy var(--review) 2px;text-underline-offset:4px}
+@media (max-width:400px){ .b{width:24px;height:24px;font-size:11px} .r .n{width:28px;font-size:13px} .r{gap:3px;padding:3px 2px} .sheet{padding:18px 12px} }
+.sheet-foot{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:22px;padding-top:16px;border-top:2px solid var(--ink)}
+.sheet-foot .count{margin:0;font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);flex:1}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);display:inline-block}
+.legend i.d{background:var(--graphite);border-color:var(--graphite)}
+.legend i.c{background:var(--hi);border-color:var(--hi)}
+.legend em{font-style:normal;text-decoration:underline wavy var(--review) 2px;text-underline-offset:3px;color:var(--ink);font-weight:700}
+
+/* Reasoning box and Logic marks */
+.why{margin-top:22px}
+.why label{display:block;font-weight:700;margin-bottom:6px}
+.why label span{display:block;font-weight:400;font-size:15px;color:var(--muted)}
+.why textarea{width:100%;min-height:84px;resize:vertical;font:inherit;font-size:17px;color:var(--ink);background:var(--paper);border:2px dashed var(--line);border-radius:12px;padding:10px 14px}
+.why textarea:focus-visible{outline:none;border-style:solid;border-color:var(--review)}
+.logic{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;margin-top:16px;border-color:var(--review)}
+@media (max-width:640px){ .logic{grid-template-columns:1fr} }
+.logic h2{font-size:26px;margin-bottom:4px}
+.logic-score{font-size:72px;font-weight:800;line-height:.9;color:var(--review);font-variant-numeric:tabular-nums}
+.logic-score small{font-size:26px;color:var(--muted);font-weight:600}
+.logic p{margin:0 0 10px;color:var(--muted)}
+.rv .yours{margin:10px 0 0;padding:10px 14px;border-radius:10px;background:var(--paper);font-size:16px}
+.rv .yours b{color:var(--review)}
+.tag.l{background:var(--review);color:#fff}
+/* Results */
+.result-top{display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center}
+@media (max-width:640px){ .result-top{grid-template-columns:1fr} }
+.big{font-size:96px;font-weight:800;line-height:.9;font-variant-numeric:tabular-nums}
+.big small{font-size:32px;color:var(--muted);font-weight:600}
+.verdict{font-size:22px;font-weight:700;margin:8px 0 4px}
+.breakdown{width:100%;border-collapse:collapse}
+.breakdown td{padding:8px 0;border-bottom:1px solid var(--line)}
+.breakdown td.n{text-align:right;font-variant-numeric:tabular-nums}
+.breakdown tr:last-child td{border-bottom:none}
+.review-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:36px 0 12px;flex-wrap:wrap}
+.review-head h2{font-size:26px}
+.toggle{display:flex;align-items:center;gap:8px;font-size:16px}
+.toggle input{width:20px;height:20px}
+.rv{background:var(--sheet);border:2px solid var(--line);border-left-width:8px;border-radius:14px;padding:16px 20px;margin-bottom:12px}
+.rv.ok{border-left-color:var(--good)}
+.rv.no{border-left-color:var(--bad)}
+.rv.skip{border-left-color:var(--muted)}
+.rv .p{font-weight:700;white-space:pre-line}
+.rv .ans{margin:8px 0;display:flex;flex-wrap:wrap;gap:8px}
+.tag{border-radius:8px;padding:2px 10px;font-size:15px}
+.tag.y{background:var(--bad-bg);color:var(--bad)}
+.tag.c{background:var(--good-bg);color:var(--good)}
+.tag.s{border:1px solid var(--line);color:var(--muted)}
+.rv .e{color:var(--muted);margin:0}
+.timesup{background:var(--hi);color:var(--on-hi);border-radius:12px;padding:10px 16px;font-weight:700;margin-bottom:16px}
+
+dialog{border:2px solid var(--line);border-radius:18px;background:var(--sheet);color:var(--ink);max-width:420px;width:calc(100% - 40px);padding:24px}
+dialog::backdrop{background:rgba(10,20,40,.5)}
+dialog h3{font-size:24px;margin-bottom:8px}
+dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.paused-veil{position:fixed;inset:0;background:var(--paper);z-index:4;display:grid;place-items:center;text-align:center;padding:20px}
+.paused-veil h2{font-size:40px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="name">NSO mock test<small>Class 6, 50 questions, 60 marks</small></div>
+  <div class="clock" id="clock" role="timer" aria-live="off">60:00</div>
+  <button class="btn quiet hidden" id="pauseBtn" type="button">Pause</button>
+  <button class="btn quiet hidden" id="restartBtn" type="button">Restart</button>
+</header>
+
+<main>
+  <!-- Start -->
+  <section id="start" class="start">
+    <h1>Class 6: moderate to very difficult</h1>
+    <p>You get 60 minutes, just like the real exam. The timer starts as soon as you press Start. When it reaches zero, your answers are submitted automatically.</p>
+    <table class="plan">
+      <tr><td>Logical reasoning, Q1 to 15</td><td>15 × 1 mark</td></tr>
+      <tr><td>Science, Q16 to 45</td><td>30 × 1 mark</td></tr>
+      <tr><td>Achievers section, Q46 to 50</td><td>5 × 3 marks</td></tr>
+      <tr><td>Total</td><td>60 marks</td></tr>
+    </table>
+    <p id="resumeNote" class="hidden">You have a test in progress. Press Continue to pick up where you left off.</p>
+    <div class="actions">
+      <button class="btn solid" id="startBtn" type="button">Start test</button>
+      <button class="btn quiet hidden" id="freshBtn" type="button">Start over</button>
+    </div>
+  </section>
+
+  <!-- Exam -->
+  <section id="exam" class="exam hidden">
+    <div class="card">
+      <div class="qmeta"><span id="secName"></span><span class="marks" id="marks"></span></div>
+      <div class="qnum" id="qnum">1</div>
+      <div class="prompt" id="prompt"></div>
+      <ul class="opts" id="opts"></ul>
+      <div class="actions">
+        <button class="btn quiet" id="prevBtn" type="button">Previous</button>
+        <button class="btn quiet flag" id="flagBtn" type="button">Mark for review</button>
+        <button class="btn quiet" id="clearBtn" type="button">Clear answer</button>
+        <span class="grow"></span>
+        <button class="btn solid" id="nextBtn" type="button">Next</button>
+      </div>
+      <p class="keys">Keyboard: press A, B, C or D to answer, and the left and right arrows to move between questions.</p>
+    </div>
+
+  <section class="sheet" id="sheet" aria-label="Bubble answer sheet">
+    <div class="sheet-meta">
+      <label>Name <input id="stuName" autocomplete="off" spellcheck="false"></label>
+      <label>Class <input id="stuClass" value="5"></label>
+      <label>Date <input id="stuDate" readonly></label>
+    </div>
+    <div class="sheet-title"><span class="bar"></span><h2>Bubble Answer Sheet</h2></div>
+    <div class="sheet-eg" aria-hidden="true"><span class="b">A</span><span class="b">B</span><span class="b fill">C</span><span class="b">D</span><span class="note">Fill one bubble fully. Tap it again to clear it.</span></div>
+    <div class="rows" id="omrGrid"></div>
+    <div class="sheet-foot">
+      <p class="count" id="count">0 of 50 answered</p>
+      <div class="legend">
+        <span><i class="d"></i>Answered</span>
+        <span><i class="c"></i>Current question</span>
+        <span><em>12.</em>Marked for review</span>
+      </div>
+      <button class="btn solid" id="submitBtn" type="button">Submit test</button>
+    </div>
+  </section>
+  </section>
+
+  <!-- Results -->
+  <section id="result" class="hidden">
+    <div id="timesup" class="timesup hidden">Time’s up! Your answers were submitted automatically.</div>
+    <div class="card result-top">
+      <div>
+        <div class="big display" id="score">0<small> / 60</small></div>
+        <p class="verdict" id="verdict"></p>
+        <p style="margin:0;color:var(--muted)" id="timeUsed"></p>
+      </div>
+      <table class="breakdown" id="breakdown"></table>
+    </div>
+    <div class="review-head">
+      <h2>Check your answers</h2>
+      <label class="toggle"><input type="checkbox" id="onlyWrong"> Show only mistakes and skipped</label>
+    </div>
+    <div id="reviewList"></div>
+    <div class="actions"><button class="btn solid" id="retakeBtn" type="button">Take the test again</button></div>
+  </section>
+</main>
+
+<div class="paused-veil hidden" id="veil">
+  <div>
+    <h2>Paused</h2>
+    <p style="color:var(--muted)">The questions are hidden while the clock is stopped.</p>
+    <button class="btn solid" id="resumeBtn" type="button">Resume</button>
+  </div>
+</div>
+
+<dialog id="confirm">
+  <h3>Submit your test?</h3>
+  <p id="confirmText"></p>
+  <div class="row">
+    <button class="btn quiet" id="cancelSubmit" type="button">Keep working</button>
+    <button class="btn solid" id="doSubmit" type="button">Submit test</button>
+  </div>
+</dialog>
+
+<dialog id="restartDlg">
+  <h3>Restart the test?</h3>
+  <p>All your answers and the timer will be cleared, and you’ll start again from question 1 with a fresh 60 minutes.</p>
+  <div class="row">
+    <button class="btn quiet" id="cancelRestart" type="button">Keep going</button>
+    <button class="btn solid" id="doRestart" type="button">Restart</button>
+  </div>
+</dialog>
+
+<script>
+const SECTIONS = ["Logical reasoning", "Science", "Achievers section"];
+const Q = [
+ {s:0,p:"Find the next number: 4, 9, 25, 49, 121, ?",o:["144","169","196","225"],a:1,e:"These are squares of prime numbers: 2², 3², 5², 7², 11². The next prime is 13, and 13² = 169."},
+ {s:0,p:"Find the next number: 1, 2, 6, 24, 120, ?",o:["240","600","720","840"],a:2,e:"Multiply by 2, 3, 4, 5 … in turn. The next step is × 6, and 120 × 6 = 720."},
+ {s:0,p:"Find the next group: BDF, HJL, NPR, ?",o:["TVX","SUW","TUV","UWY"],a:0,e:"Inside each group the letters skip one (B_D_F). Each group starts two letters after the last one ended (F → H, L → N, R → T), so the next group is TVX."},
+ {s:0,p:"If GARDEN is coded as ICTFGP, how is FRIEND coded?",o:["HTKGPF","HTKFPF","GSJFOE","HTJGPF"],a:0,e:"Each letter moves two places forward: F→H, R→T, I→K, E→G, N→P, D→F."},
+ {s:0,p:"If A = 1, B = 2 … Z = 26, then APPLE = 1 + 16 + 16 + 12 + 5 = 50. What does MANGO equal?",o:["48","50","52","47"],a:1,e:"M = 13, A = 1, N = 14, G = 7, O = 15, and 13 + 1 + 14 + 7 + 15 = 50. Same total as APPLE!"},
+ {s:0,p:"A man walks 10 m South, turns left and walks 20 m, turns left and walks 10 m, then turns right and walks 5 m. How far is he from the start, and in which direction?",o:["25 m East","25 m West","20 m North","15 m East"],a:0,e:"South 10, then left means East 20, then left means North 10 (back to the starting line), then right means East 5. Total: 25 m East.",h:"Draw it, and remember that ‘left’ depends on which way he’s facing."},
+ {s:0,p:"At 7 a.m., Rahul’s shadow falls exactly to his RIGHT. Which direction is he facing?",o:["North","South","East","West"],a:1,e:"In the morning the Sun is in the East, so shadows point West. If West is on his right, he must be facing South.",h:"Where is the Sun in the morning, and which way do shadows point?"},
+ {s:0,p:"In a row, P is 14th from the left and Q is 17th from the right. When they swap places, P becomes 21st from the left. How many people are in the row?",o:["35","36","37","38"],a:2,e:"After swapping, P is in Q’s old place, which is 21st from the left and 17th from the right. Total = 21 + 17 − 1 = 37."},
+ {s:0,p:"Today is Tuesday. What day will it be 100 days from today?",o:["Wednesday","Thursday","Friday","Saturday"],a:1,e:"100 = 14 weeks + 2 days. Tuesday + 2 days = Thursday."},
+ {s:0,p:"What is the angle between the hour hand and the minute hand at 4:20?",o:["0°","10°","20°","30°"],a:1,e:"The minute hand is at 4 (120°). In 20 minutes the hour hand moves 10° past 4, to 130°. 130° − 120° = 10°."},
+ {s:0,p:"In a mirror, a clock appears to show 3:40. What is the actual time?",o:["8:20","9:20","8:40","9:40"],a:0,e:"For mirror images of clocks, subtract the time shown from 11:60. 11:60 − 3:40 = 8:20."},
+ {s:0,p:"Pointing to a girl in a photo, Arun says, “Her mother is the only daughter of my mother.” How is Arun related to the girl?",o:["Father","Brother","Maternal uncle","Cousin"],a:2,e:"The only daughter of Arun’s mother is Arun’s sister. The girl’s mother is Arun’s sister, so Arun is her maternal uncle."},
+ {s:0,p:"Ammeter : Electric current :: Odometer : ?",o:["Speed","Distance travelled","Fuel","Time"],a:1,e:"An ammeter measures current, and an odometer measures the distance a vehicle has travelled. A speedometer measures speed."},
+ {s:0,p:"Find the odd one out.",o:["Mercury","Copper","Iron","Bromine"],a:3,e:"Bromine is a non-metal. Mercury is a liquid, which makes it look like the odd one, but it is still a metal!"},
+ {s:0,p:"In a class of 40 students, 22 like cricket, 18 like football and 7 like both. How many students like neither?",o:["0","7","11","5"],a:1,e:"Students who like at least one = 22 + 18 − 7 = 33. So 40 − 33 = 7 like neither."},
+ {s:1,p:"Which of these is NOT a good source of dietary fibre (roughage)?",o:["Whole grains","Fresh vegetables","Fruits","Milk"],a:3,e:"Roughage comes from plants. Milk is an animal product and has almost no fibre."},
+ {s:1,p:"A food sample turns blue-black when a few drops of iodine solution are added. It contains:",o:["Protein","Fat","Starch","Vitamin C"],a:2,e:"Iodine turns blue-black with starch. That’s the standard starch test."},
+ {s:1,p:"In the test using copper sulphate and caustic soda solution, which food turns VIOLET?",o:["Boiled rice","Egg white","Ghee","Sugar"],a:1,e:"A violet colour shows protein, and egg white is rich in protein."},
+ {s:1,p:"The process of separating cotton fibres from the seeds is called:",o:["Spinning","Weaving","Ginning","Retting"],a:2,e:"Ginning removes the seeds from the cotton fibres. Retting is used for jute, and spinning makes yarn from fibres."},
+ {s:1,p:"Mud settles at the bottom of a glass of muddy water. Pouring out the clear water on top without disturbing the mud is called:",o:["Sedimentation","Decantation","Filtration","Evaporation"],a:1,e:"The settling is sedimentation, and pouring off the clear liquid is decantation."},
+ {s:1,p:"Farmers separate the lighter husk from heavier grain by letting it fall in the wind. This is called:",o:["Threshing","Winnowing","Sieving","Handpicking"],a:1,e:"In winnowing, wind carries the light husk away while the heavier grain falls straight down. Threshing separates grain from the stalks."},
+ {s:1,p:"Which of these changes can be REVERSED?",o:["Burning paper","Cooking rice","Melting wax","Rusting of iron"],a:2,e:"Melted wax can become solid again on cooling. The others make new substances and can’t be undone."},
+ {s:1,p:"A blacksmith heats an iron rim before fitting it on a wooden cart wheel. Why?",o:["To make the iron softer and lighter","Iron expands when hot and shrinks to grip tightly when it cools","To burn the wood slightly so it sticks","To remove rust from the rim"],a:1,e:"The heated rim expands and slips on easily. As it cools, it contracts and fits very tightly."},
+ {s:1,p:"A plant has leaves with a net-like pattern of veins (reticulate venation). What type of roots is it most likely to have?",o:["Fibrous roots","Taproot","No roots","Aerial roots only"],a:1,e:"Plants with reticulate venation usually have taproots, like mustard. Plants with parallel venation, like grass, usually have fibrous roots."},
+ {s:1,p:"Which parts together make up the PISTIL of a flower?",o:["Anther and filament","Stigma, style and ovary","Sepals and petals","Anther, style and ovary"],a:1,e:"The pistil (female part) has a stigma, style and ovary. The stamen (male part) has an anther and filament."},
+ {s:1,p:"Plants lose water as vapour through tiny pores in their leaves. This process is called:",o:["Photosynthesis","Respiration","Transpiration","Condensation"],a:2,e:"Water escapes through tiny pores called stomata. This is transpiration."},
+ {s:1,p:"Which joint lets your head turn left and right where the skull meets the neck?",o:["Hinge joint","Pivot joint","Ball and socket joint","Fixed joint"],a:1,e:"A pivot joint allows turning around one point, like the head rotating on the neck."},
+ {s:1,p:"How does an earthworm grip the ground while it moves?",o:["With its legs","With tiny bristles on its body","With its tail","With a sticky foot"],a:1,e:"Tiny bristles (setae) on its underside grip the soil while its muscles stretch and squeeze its body."},
+ {s:1,p:"Many trees on cold mountains are cone-shaped with sloping branches. How does this help them?",o:["They catch more rain","Snow slides off easily","They grow faster","Animals can’t climb them"],a:1,e:"Sloping branches let heavy snow slide off, so the branches don’t break."},
+ {s:1,p:"Which of these is NOT true for ALL living things?",o:["They respire","They grow","They move from place to place","They respond to changes around them"],a:2,e:"Plants are alive but don’t move from place to place. All living things respire, grow and respond to stimuli."},
+ {s:1,p:"How many centimetres are there in 1 kilometre?",o:["1,000","10,000","1,00,000","10,00,000"],a:2,e:"1 km = 1,000 m, and 1 m = 100 cm. So 1 km = 1,000 × 100 = 1,00,000 cm."},
+ {s:1,p:"A child on a swing goes back and forth again and again in the same time. This is called:",o:["Rectilinear motion","Circular motion","Periodic motion","Random motion"],a:2,e:"Motion that repeats itself after a fixed time is periodic motion."},
+ {s:1,p:"Why is a handspan NOT used as a standard unit of length?",o:["It is too small","It is different for different people","It can only measure cloth","It is hard to remember"],a:1,e:"Handspans vary from person to person, so measurements wouldn’t match. Standard units are the same everywhere."},
+ {s:1,p:"A pinhole camera forms an image of a tree. The image is:",o:["Upright and coloured","Inverted (upside down)","Black like a shadow","Always the same size as the tree"],a:1,e:"Light travels in straight lines and crosses at the pinhole, so the image is upside down."},
+ {s:1,p:"What colour is the shadow of a red rose?",o:["Red","Pink","Dark (black)","Green"],a:2,e:"A shadow is just the area where light is blocked, so it is always dark. It doesn’t take the colour of the object."},
+ {s:1,p:"Which of these is TRANSLUCENT, meaning it lets some light through but you can’t see clearly through it?",o:["Clear glass","Butter paper","A wooden board","Air"],a:1,e:"Butter paper and frosted glass are translucent. Clear glass and air are transparent, and wood is opaque."},
+ {s:1,p:"In a dry cell (battery), which terminal has the small metal cap?",o:["Negative","Positive","Both","Neither"],a:1,e:"The metal cap is the positive terminal. The flat metal base is the negative terminal."},
+ {s:1,p:"A bar magnet is hung freely from a thread. It always comes to rest pointing:",o:["East–West","North–South","Up–Down","In any direction"],a:1,e:"A freely hung magnet lines up North–South. That’s how a compass works."},
+ {s:1,p:"Which of these is attracted to a magnet?",o:["Copper","Aluminium","Nickel","Brass"],a:2,e:"Iron, nickel and cobalt are magnetic. Copper, aluminium and brass are metals, but they are NOT attracted."},
+ {s:1,p:"Which of these does NOT make a magnet weaker?",o:["Heating it","Hammering it","Dropping it again and again","Storing it in pairs with keepers"],a:3,e:"Keepers (soft iron pieces) help magnets keep their strength. Heat, hammering and dropping weaken them."},
+ {s:1,p:"Clouds are mostly made of:",o:["Water vapour","Tiny drops of water or ice","Smoke","Dust only"],a:1,e:"Water vapour is invisible. Clouds form when vapour condenses into tiny water droplets or ice crystals that we can see."},
+ {s:1,p:"About how much of the air around us is nitrogen?",o:["21%","50%","78%","1%"],a:2,e:"Air is about 78% nitrogen and 21% oxygen. The rest is other gases, including carbon dioxide."},
+ {s:1,p:"A burning candle is covered with a glass jar. After a while, the flame goes out. Why?",o:["The jar becomes too hot","The oxygen inside gets used up","Nitrogen inside catches fire","The wax runs out"],a:1,e:"Burning needs oxygen. Once the oxygen inside the jar is used up, the flame goes out."},
+ {s:1,p:"Making manure from kitchen waste using red worms is called:",o:["Composting with fungi","Vermicomposting","Recycling","Landfilling"],a:1,e:"In vermicomposting, red worms eat the waste and turn it into rich manure. Plastics and metals can’t be composted this way."},
+ {s:1,p:"What is the filament of an ordinary electric bulb made of?",o:["Copper","Tungsten","Aluminium","Iron"],a:1,e:"Tungsten is used because it can get white-hot and glow without melting."},
+ {s:2,p:"Riya ties a polythene bag over a potted plant, covering the whole pot and the plant. Next day there are water drops inside the bag. Her friend says the drops might come from the wet soil, not the leaves. How can Riya prove the water comes from the leaves?",o:["Use a bigger bag","Water the soil more","Cover the soil with plastic and tie the bag only over the leaves","Keep the plant in the dark"],a:2,e:"Covering the soil means water can’t evaporate from it. Any drops that appear must have come from the leaves by transpiration."},
+ {s:2,p:"Read these statements:\n(i) All metals are attracted by a magnet.\n(ii) Like poles of magnets repel each other.\n(iii) If a bar magnet is broken in two, each piece still has a North and a South pole.\nWhich statements are correct?",o:["(i) and (ii) only","(ii) and (iii) only","(i) and (iii) only","All three"],a:1,e:"Statement (i) is wrong. Copper, aluminium and many other metals are not attracted by magnets."},
+ {s:2,p:"You have a mixture of salt, sand, iron filings and sawdust. What is the best order of steps to separate all four?",o:["Add water → filter → magnet → evaporate","Magnet → add water and skim off the floating sawdust → filter out the sand → evaporate to get salt","Evaporate → magnet → filter → winnow","Filter → magnet → evaporate → add water"],a:1,e:"Take out the iron first with a magnet. In water, sawdust floats and can be skimmed off, sand can be filtered out, and the dissolved salt is left behind when the water evaporates."},
+ {s:2,p:"A pencil is held between a torch and a wall, and its shadow falls on the wall. What happens to the shadow when the pencil is moved CLOSER to the torch?",o:["It gets smaller","It gets bigger","It stays the same size","It disappears"],a:1,e:"Closer to the light, the pencil blocks a wider cone of light, so its shadow on the wall gets bigger."},
+ {s:2,p:"Two bulbs, A and B, are connected one after the other in a single loop with a cell. Bulb A’s filament breaks. What happens to bulb B?",o:["It glows brighter","It keeps glowing normally","It goes off","It flickers on and off"],a:2,e:"The current has only one path. When A’s filament breaks, the circuit is broken, so no current reaches B either."}
+];
+const TOTAL_SECONDS = 3600;
+const KEY = "nso6-mock-v1";
+const L = ["A","B","C","D"];
+const marksOf = q => q.s === 2 ? 3 : 1;
+const $ = id => document.getElementById(id);
+
+let st = fresh();
+function fresh(){ return {phase:"start", ans:Array(Q.length).fill(null), rev:Array(Q.length).fill(false), cur:0, remaining:TOTAL_SECONDS, endsAt:null, paused:false, timedOut:false, why:Array(Q.length).fill(""), logic:null}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && Array.isArray(s.ans) && s.ans.length === Q.length){ if(!Array.isArray(s.why)) s.why = Array(Q.length).fill(""); if(s.logic === undefined) s.logic = null; return s; } }catch(e){} return null; }
+
+function fmt(sec){ const m = Math.floor(sec/60), s = sec%60; return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"); }
+function remainingNow(){ return st.endsAt ? Math.max(0, Math.ceil((st.endsAt - Date.now())/1000)) : st.remaining; }
+
+function drawClock(){
+  const r = remainingNow();
+  const c = $("clock");
+  c.textContent = fmt(r);
+  c.classList.toggle("warn", r <= 300 && r > 60 && st.phase === "exam");
+  c.classList.toggle("urgent", r <= 60 && st.phase === "exam");
+  c.setAttribute("aria-label", Math.floor(r/60)+" minutes "+(r%60)+" seconds left");
+}
+let lastSaved = 0;
+setInterval(() => {
+  if(st.phase !== "exam" || st.paused) return;
+  const r = remainingNow();
+  drawClock();
+  if(Date.now() - lastSaved > 5000){ st.remaining = r; save(); lastSaved = Date.now(); }
+  if(r <= 0){ st.timedOut = true; finish(); }
+}, 250);
+
+function show(phase){
+  st.phase = phase;
+  $("start").classList.toggle("hidden", phase !== "start");
+  $("exam").classList.toggle("hidden", phase !== "exam");
+  $("result").classList.toggle("hidden", phase !== "result");
+  $("pauseBtn").classList.toggle("hidden", phase !== "exam");
+  $("restartBtn").classList.toggle("hidden", phase === "start");
+  $("veil").classList.toggle("hidden", !(phase === "exam" && st.paused));
+}
+
+function begin(){
+  st.phase = "exam"; st.paused = false;
+  st.endsAt = Date.now() + st.remaining*1000;
+  save(); show("exam"); buildOmr(); render(); drawClock();
+}
+
+function buildOmr(){
+  const g = $("omrGrid"); g.innerHTML = "";
+  Q.forEach((q, i) => {
+    const r = document.createElement("div"); r.className = "r"; r.dataset.i = i;
+    const n = document.createElement("button");
+    n.type = "button"; n.className = "n"; n.textContent = (i+1)+".";
+    n.setAttribute("aria-label", "Go to question "+(i+1));
+    n.addEventListener("click", () => { st.cur = i; render(); window.scrollTo({top:0}); });
+    r.appendChild(n);
+    L.forEach((l, k) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "b"; b.textContent = l; b.dataset.k = k;
+      b.setAttribute("aria-label", "Question "+(i+1)+", option "+l);
+      b.addEventListener("click", () => { st.cur = i; st.ans[i] = st.ans[i] === k ? null : k; render(); });
+      r.appendChild(b);
+    });
+    g.appendChild(r);
+  });
+}
+
+function render(){
+  const i = st.cur, q = Q[i];
+  $("secName").textContent = SECTIONS[q.s];
+  $("marks").textContent = marksOf(q) === 3 ? "3 marks" : "1 mark";
+  $("qnum").textContent = i+1;
+  $("prompt").textContent = q.p;
+  const ul = $("opts"); ul.innerHTML = "";
+  q.o.forEach((t, k) => {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "opt" + (st.ans[i] === k ? " on" : "");
+    b.setAttribute("aria-pressed", st.ans[i] === k);
+    b.innerHTML = '<span class="bub">'+L[k]+'</span><span></span>';
+    b.lastChild.textContent = t;
+    b.addEventListener("click", () => choose(k));
+    li.appendChild(b); ul.appendChild(li);
+  });
+  $("prevBtn").disabled = i === 0;
+  $("nextBtn").textContent = i === Q.length-1 ? "Finish" : "Next";
+  $("flagBtn").classList.toggle("on", st.rev[i]);
+  $("flagBtn").textContent = st.rev[i] ? "Marked for review" : "Mark for review";
+  $("clearBtn").disabled = st.ans[i] === null;
+  document.querySelectorAll("#omrGrid .r").forEach(r => {
+    const j = +r.dataset.i;
+    r.classList.toggle("cur", j === i);
+    r.classList.toggle("rev", st.rev[j]);
+    r.querySelectorAll(".b").forEach(b => {
+      const on = st.ans[j] === +b.dataset.k;
+      b.classList.toggle("fill", on);
+      b.setAttribute("aria-pressed", on);
+    });
+  });
+  const n = st.ans.filter(a => a !== null).length;
+  $("count").textContent = n+" of "+Q.length+" answered";
+  save();
+}
+function choose(k){ st.ans[st.cur] = k; render(); }
+function go(d){ const n = st.cur + d; if(n >= 0 && n < Q.length){ st.cur = n; render(); window.scrollTo({top:0}); } else if(n >= Q.length){ askSubmit(); } }
+
+function askSubmit(){
+  const left = st.ans.filter(a => a === null).length;
+  const rev = st.rev.filter(Boolean).length;
+  let t = left ? "You still have "+left+" unanswered question"+(left>1?"s":"")+"." : "You’ve answered every question.";
+  if(rev) t += " "+rev+" "+(rev>1?"are":"is")+" marked for review.";
+  t += " You can’t change answers after submitting.";
+  $("confirmText").textContent = t;
+  $("confirm").showModal();
+}
+
+function finish(){
+  if($("confirm").open) $("confirm").close();
+  st.remaining = remainingNow(); st.endsAt = null; st.paused = false;
+  show("result"); save(); drawClock(); renderResult();
+}
+
+function renderResult(){
+  let score = 0; const per = SECTIONS.map(() => ({c:0,w:0,s:0,m:0,max:0}));
+  Q.forEach((q,i) => {
+    const p = per[q.s]; p.max += marksOf(q);
+    if(st.ans[i] === null) p.s++;
+    else if(st.ans[i] === q.a){ p.c++; p.m += marksOf(q); score += marksOf(q); }
+    else p.w++;
+  });
+  $("score").innerHTML = score + "<small> / 60</small>";
+  $("verdict").textContent = score >= 50 ? "Excellent. You’re exam-ready." : score >= 40 ? "Good work. Polish the ones you missed." : score >= 30 ? "Decent start. Revise the topics below." : "Keep practising. Go through every explanation below.";
+  const used = TOTAL_SECONDS - st.remaining;
+  $("timeUsed").textContent = "Time used: "+Math.floor(used/60)+" min "+(used%60)+" s";
+  $("timesup").classList.toggle("hidden", !st.timedOut);
+  $("breakdown").innerHTML = "";
+  SECTIONS.forEach((n,si) => {
+    const p = per[si], tr = document.createElement("tr");
+    tr.innerHTML = "<td></td><td class='n'></td>";
+    tr.children[0].textContent = n+" ("+p.c+" right, "+p.w+" wrong, "+p.s+" skipped)";
+    tr.children[1].textContent = p.m+" / "+p.max;
+    $("breakdown").appendChild(tr);
+  });
+  drawReview();
+}
+function drawReview(){
+  const only = $("onlyWrong").checked, list = $("reviewList"); list.innerHTML = "";
+  Q.forEach((q,i) => {
+    const a = st.ans[i], ok = a === q.a, skip = a === null;
+    if(only && ok) return;
+    const d = document.createElement("div");
+    d.className = "rv " + (ok ? "ok" : skip ? "skip" : "no");
+    const p = document.createElement("p"); p.className = "p"; p.textContent = (i+1)+". "+q.p;
+    const ans = document.createElement("div"); ans.className = "ans";
+    if(skip){ const s = document.createElement("span"); s.className="tag s"; s.textContent="Skipped"; ans.appendChild(s); }
+    else if(!ok){ const y = document.createElement("span"); y.className="tag y"; y.textContent="Your answer: "+L[a]+". "+q.o[a]; ans.appendChild(y); }
+    const c = document.createElement("span"); c.className="tag c"; c.textContent=(ok?"Correct: ":"Right answer: ")+L[q.a]+". "+q.o[q.a]; ans.appendChild(c);
+    const e = document.createElement("p"); e.className = "e"; e.textContent = q.e;
+    const w = (st.why[i]||"").trim();
+    if(w){
+      const y = document.createElement("p"); y.className = "yours";
+      const lg = st.logic && st.logic.per[i];
+      y.innerHTML = "<b>Your reason:</b> ";
+      y.append(w);
+      if(lg){
+        const t = document.createElement("span"); t.className = "tag l"; t.style.marginLeft = "8px";
+        t.textContent = "Logic +" + fmtPts(lg.p); y.append(t);
+        if(lg.note){ const nn = document.createElement("div"); nn.style.marginTop = "6px"; nn.style.color = "var(--muted)"; nn.textContent = lg.note; y.append(nn); }
+      }
+      d.append(p, ans, e, y);
+    } else d.append(p, ans, e);
+    list.appendChild(d);
+  });
+  if(!list.children.length){ list.innerHTML = "<p>No mistakes and nothing skipped. Full marks!</p>"; }
+}
+
+function pause(){
+  if(st.paused){ st.paused = false; st.endsAt = Date.now() + st.remaining*1000; $("pauseBtn").textContent = "Pause"; }
+  else { st.remaining = remainingNow(); st.endsAt = null; st.paused = true; $("pauseBtn").textContent = "Resume"; }
+  $("veil").classList.toggle("hidden", !st.paused);
+  save(); drawClock();
+}
+
+$("startBtn").addEventListener("click", begin);
+$("freshBtn").addEventListener("click", () => { st = fresh(); save(); setupStart(); begin(); });
+$("prevBtn").addEventListener("click", () => go(-1));
+$("nextBtn").addEventListener("click", () => go(1));
+$("flagBtn").addEventListener("click", () => { st.rev[st.cur] = !st.rev[st.cur]; render(); });
+$("clearBtn").addEventListener("click", () => { st.ans[st.cur] = null; render(); });
+$("submitBtn").addEventListener("click", askSubmit);
+$("cancelSubmit").addEventListener("click", () => $("confirm").close());
+$("doSubmit").addEventListener("click", finish);
+$("pauseBtn").addEventListener("click", pause);
+$("restartBtn").addEventListener("click", () => $("restartDlg").showModal());
+$("cancelRestart").addEventListener("click", () => $("restartDlg").close());
+$("doRestart").addEventListener("click", () => { $("restartDlg").close(); st = fresh(); save(); $("pauseBtn").textContent = "Pause"; setupStart(); show("start"); drawClock(); window.scrollTo({top:0}); });
+$("resumeBtn").addEventListener("click", pause);
+$("onlyWrong").addEventListener("change", drawReview);
+$("retakeBtn").addEventListener("click", () => { st = fresh(); save(); setupStart(); show("start"); drawClock(); window.scrollTo({top:0}); });
+
+document.addEventListener("keydown", e => {
+  if(st.phase !== "exam" || st.paused || $("confirm").open || $("restartDlg").open) return;
+  if(e.target.closest && e.target.closest("input,textarea")) return;
+  const k = e.key.toLowerCase();
+  const idx = ["a","b","c","d"].indexOf(k);
+  const num = ["1","2","3","4"].indexOf(k);
+  if(idx >= 0) choose(idx); else if(num >= 0) choose(num);
+  else if(e.key === "ArrowRight") go(1);
+  else if(e.key === "ArrowLeft") go(-1);
+});
+
+function setupStart(){
+  const inProgress = st.phase === "exam";
+  $("resumeNote").classList.toggle("hidden", !inProgress);
+  $("freshBtn").classList.toggle("hidden", !inProgress);
+  $("startBtn").textContent = inProgress ? "Continue" : "Start test";
+}
+
+(function sheetInfo(){
+  const d = new Date();
+  $("stuDate").value = String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
+  try{ $("stuName").value = localStorage.getItem("nso5-name") || ""; }catch(e){}
+  $("stuName").addEventListener("input", e => { try{ localStorage.setItem("nso5-name", e.target.value); }catch(err){} });
+})();
+
+(function init(){
+  const s = load();
+  if(s){ st = s; }
+  if(st.phase === "exam"){
+    // Clock keeps running across a reload unless paused
+    if(!st.paused && st.endsAt && remainingNow() <= 0){ st.timedOut = true; buildOmr(); finish(); return; }
+    if(!st.paused && st.endsAt){ show("exam"); buildOmr(); render(); drawClock(); return; }
+    st.paused = true; show("exam"); buildOmr(); render(); drawClock(); $("pauseBtn").textContent = "Resume"; return;
+  }
+  if(st.phase === "result"){ show("result"); drawClock(); renderResult(); return; }
+  setupStart(); show("start"); drawClock();
+})();
+</script>
+</body>
+</html>
